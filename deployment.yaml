@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-flask-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-flask-container
+        image: gidil/my-flask-app:1.0
+        ports:
+        - containerPort: 5000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        imagePullPolicy: Never
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "200m"
+        env:
+          - name: APP_GREETING
+            valueFrom:
+              configMapKeyRef:
+                name: flask-config
+                key: APP_GREETING
+          - name: APP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: flask-secret
+                key: APP_PASSWORD
+          - name: SIMULATE_READINESS_FAIL
+            valueFrom:
+              configMapKeyRef:
+                name: flask-config
+                key: SIMULATE_READINESS_FAIL
+          - name: SIMULATE_LIVENESS_HANG
+            valueFrom:
+              configMapKeyRef:
+                name: flask-config
+                key: SIMULATE_LIVENESS_HANG
