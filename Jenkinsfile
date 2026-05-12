@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh 'python --version'
                    retry(3){
-                          sh echo "Gidon"
+                          sh 'echo "Gidon"'
                    }
             }
         }
