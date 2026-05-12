@@ -5,7 +5,9 @@ pipeline {
         stage('build') {
             steps {
                 sh 'python --version'
-		echo 'Gidon'
+                   retry(3){
+                          sh echo "Gidon"
+                   }
             }
         }
     }
